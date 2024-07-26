@@ -1,0 +1,40 @@
+def save_melody(self, melody, step_duration=0.25, format="midi", file_name="mel.midi"):
+    # create a music21 stream
+    stream = m21.stream.Stream()
+
+    # parse all the symbols in the melody and create a note/rest objects
+    # 60 _ _ _ r _ 62 _
+    start_symbol = None
+    step_counter = 1
+
+    for i, symbol in enumerate(melody):
+        # handle case in which we have note/rest
+        if symbol != "_ " or i + 1 == len(melody):
+            # ensure we are dealing with note/rest beyind with the first one
+            if start_symbol is not None:
+                quarter_length_duration = step_duration * step_counter
+                # case1: Handle a rest
+                if start_symbol == "r":
+                    m21_event = m21.note.Rest(quarterLength=quarter_length_duration)
+
+                # case2: Handle a note
+                else:
+                    m21_event = m21.note.Note(
+                        int(start_symbol), quarterLength=quarter_length_duration
+                    )
+                    # m21_event = m21.note.Note(int(start_symbol),quarterLength=quarter_length_duration)
+
+                stream.append(m21_event)
+
+                # reset the step counter
+
+                step_counter = 1
+
+            start_symbol = symbol
+
+        # handle case where we have a prolongation sign "_"
+        else:
+            step_counter += 1
+
+    # write m21 stream to midi file
+    stream.write(format, file_name)
