@@ -114,7 +114,7 @@ class MelodyGenerator:
 
 
 if __name__ == "__main__":
-    mg = MelodyGenerator()
+    mg = MelodyGenerator("model.h5")
     seed = "55 _ 60 _ 60 _ 62 _ 62 _ 64 _ "
     melody = mg.generate_melody(seed, 500, SEQUENCE_LENGTH, 0.8)
     print(melody)

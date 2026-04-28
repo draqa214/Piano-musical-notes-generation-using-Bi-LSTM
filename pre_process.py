@@ -202,16 +202,22 @@ def generate_training_sequences(sequence_length):
 
 
 def open_midi_with_musescore(midi_file_path):
+    candidates = [
+        r"C:\Program Files\MuseScore 4\bin\MuseScore4.exe",
+        r"C:\Program Files\MuseScore 3\bin\MuseScore3.exe",
+        r"C:\Program Files (x86)\MuseScore 4\bin\MuseScore4.exe",
+        r"C:\Program Files (x86)\MuseScore 3\bin\MuseScore3.exe",
+        os.path.join(os.getcwd(), "MuseScorePortable", "MuseScorePortable.exe"),
+    ]
+
+    musescore_executable = next((p for p in candidates if os.path.exists(p)), None)
+
+    if musescore_executable is None:
+        print("MuseScore not found. Please open 'mel.mid' manually.")
+        return
+
     try:
-        # Replace 'MuseScore3' with 'MuseScore' if you're using an older version
-        musescore_executable = r"C:\Program Files\MuseScore 4\bin\MuseScore4.exe"
-
-        # Command to open the MIDI file in MuseScore
-        command = [musescore_executable, midi_file_path]
-
-        # Open MuseScore using subprocess
-        subprocess.run(command, check=True)
-
+        subprocess.run([musescore_executable, midi_file_path], check=True)
         print(f"MIDI file '{midi_file_path}' opened successfully in MuseScore.")
     except subprocess.CalledProcessError as e:
         print(f"Error opening MIDI file: {e}")
